@@ -26,16 +26,20 @@ bot.on('guildMemberRemove', async(member) =>{
 
 console.log(bot.channels.cache.flatMap())
 
-bot.on('messageCreate', async(msg) =>{
-  let com = msg.content.split(' ').slice(config.keyword.length)[1]
-  let dado = msg.content.split(' ').slice(config.keyword.length)[2]
-if(msg.content.startsWith(config.keyword)){ 
+bot.on('message', (message) =>{
+  let com = message.content.split(' ')
+  com = com.pop(config.keyword)
+if(message.content.startsWith(config.keyword)){ 
     try {
-      await require(`./comandos/${com}`)?.run(bot, msg, config)
-    } catch(err) {
-      msg.channel.send('Comando não encontrado!!!')
+      let execmd = require('./comandos/' + com + '.js')
+      
+    } catch (error) {
+      console.log('err:' + error)
+      message.channel.send('Comando não encontrado!')
     }
-}})
+    return execmd.run = (bot, message, config) 
+}
+})
 
 bot.on('ready', () =>{
   console.log('pronto')
